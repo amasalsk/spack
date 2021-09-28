@@ -95,6 +95,24 @@ setsep() {
     esac
 }
 
+# prepend LISTNAME ELEMENT [SEP]
+#
+# Prepends element to list, assuming list is separted by SEP.
+# Handles empty lists and single-element lists.
+prepend() {
+    varname="$1"
+    elt="$2"
+
+    if empty "$varname"; then
+        eval "$varname=\"\${elt}\""
+    else
+        # get appropriate separator for the list we're appending to
+        setsep "$varname"
+        eval "$varname=\"\${elt}${sep}\${$varname}\""
+    fi
+}
+
+
 # append LISTNAME ELEMENT [SEP]
 #
 # Appends element to list, assuming list is separted by SEP.
@@ -563,7 +581,7 @@ case "$mode" in
 
         # prepend target args
         for arg in $SPACK_TARGET_ARGS; do
-            flags_list="${arg}${lsep}${flags_list}"
+            prepend flags_list "${arg}"
         done
         ;;
 esac
