@@ -29,6 +29,7 @@ unset IFS
 # We pick the alarm bell character, which is highly unlikely to
 # conflict with anything. This is a literal bell character (which
 # we have to use to avoid shell quoting issues with \a).
+# NOTE: Depending on your editor this may look empty, but it is not.
 lsep=''
 
 # This is an array of environment variables that need to be set before
