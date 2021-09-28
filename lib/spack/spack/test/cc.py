@@ -31,7 +31,9 @@ test_args = [
     '-Xlinker', '-rpath', '-Xlinker', '/fourth/rpath',
     '-Wl,--rpath,/fifth/rpath', '-Wl,--rpath', '-Wl,/sixth/rpath',
     '-llib3', '-llib4',
-    'arg5', 'arg6']
+    'arg5', 'arg6',
+    '"-DDOUBLE_QUOTED_ARG"', "'-DSINGLE_QUOTED_ARG'",
+]
 
 #
 # Pieces of the test command above, as they should be parsed out.
@@ -60,7 +62,9 @@ test_args_without_paths = [
     '-Wl,--start-group',
     'arg2', 'arg3', '-llib1', '-llib2', 'arg4',
     '-Wl,--end-group',
-    '-llib3', '-llib4', 'arg5', 'arg6']
+    '-llib3', '-llib4', 'arg5', 'arg6',
+    '"-DDOUBLE_QUOTED_ARG"', "'-DSINGLE_QUOTED_ARG'",
+]
 
 #: The prefix of the package being mock installed
 pkg_prefix = '/spack-test-prefix'
