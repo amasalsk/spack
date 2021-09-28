@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/sh
 # shellcheck disable=SC2034  # evals in this script fool shellcheck
 #
 # Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
@@ -111,7 +111,6 @@ prepend() {
         eval "$varname=\"\${elt}${sep}\${$varname}\""
     fi
 }
-
 
 # append LISTNAME ELEMENT [SEP]
 #
