@@ -90,6 +90,15 @@ spack_ldlibs   = ['-lfoo']
 lheaderpad = ['-Wl,-headerpad_max_install_names']
 headerpad = ['-headerpad_max_install_names']
 
+# common compile arguments: includes, libs, -Wl linker args, other args
+common_compile_args = (
+    test_include_paths +
+    test_library_paths +
+    ['-Wl,--disable-new-dtags'] +
+    test_wl_rpaths +
+    test_args_without_paths
+)
+
 
 @pytest.fixture(scope='session')
 def wrapper_environment():
@@ -225,11 +234,7 @@ def test_cc_flags(wrapper_flags):
         spack_cppflags +
         spack_cflags +
         spack_ldflags +
-        test_include_paths +
-        test_library_paths +
-        ['-Wl,--disable-new-dtags'] +
-        test_wl_rpaths +
-        test_args_without_paths +
+        common_compile_args +
         spack_ldlibs)
 
 
@@ -240,11 +245,7 @@ def test_cxx_flags(wrapper_flags):
         spack_cppflags +
         spack_cxxflags +
         spack_ldflags +
-        test_include_paths +
-        test_library_paths +
-        ['-Wl,--disable-new-dtags'] +
-        test_wl_rpaths +
-        test_args_without_paths +
+        common_compile_args +
         spack_ldlibs)
 
 
@@ -255,11 +256,7 @@ def test_fc_flags(wrapper_flags):
         spack_fflags +
         spack_cppflags +
         spack_ldflags +
-        test_include_paths +
-        test_library_paths +
-        ['-Wl,--disable-new-dtags'] +
-        test_wl_rpaths +
-        test_args_without_paths +
+        common_compile_args +
         spack_ldlibs)
 
 
@@ -268,11 +265,7 @@ def test_dep_rpath():
     check_args(
         cc, test_args,
         [real_cc] +
-        test_include_paths +
-        test_library_paths +
-        ['-Wl,--disable-new-dtags'] +
-        test_wl_rpaths +
-        test_args_without_paths)
+        common_compile_args)
 
 
 def test_dep_include():
@@ -597,22 +590,14 @@ def test_ccache_prepend_for_cc():
             cc, test_args,
             ['ccache'] +  # ccache prepended in cc mode
             [real_cc] +
-            test_include_paths +
-            test_library_paths +
-            ['-Wl,--disable-new-dtags'] +
-            test_wl_rpaths +
-            test_args_without_paths)
+            common_compile_args)
         os.environ['SPACK_SHORT_SPEC'] = "foo@1.2=darwin-x86_64"
         check_args(
             cc, test_args,
             ['ccache'] +  # ccache prepended in cc mode
             [real_cc] +
             lheaderpad +
-            test_include_paths +
-            test_library_paths +
-            ['-Wl,--disable-new-dtags'] +
-            test_wl_rpaths +
-            test_args_without_paths)
+            common_compile_args)
 
 
 def test_no_ccache_prepend_for_fc():
@@ -621,22 +606,14 @@ def test_no_ccache_prepend_for_fc():
         fc, test_args,
         # no ccache for Fortran
         [real_cc] +
-        test_include_paths +
-        test_library_paths +
-        ['-Wl,--disable-new-dtags'] +
-        test_wl_rpaths +
-        test_args_without_paths)
+        common_compile_args)
     os.environ['SPACK_SHORT_SPEC'] = "foo@1.2=darwin-x86_64"
     check_args(
         fc, test_args,
         # no ccache for Fortran
         [real_cc] +
         lheaderpad +
-        test_include_paths +
-        test_library_paths +
-        ['-Wl,--disable-new-dtags'] +
-        test_wl_rpaths +
-        test_args_without_paths)
+        common_compile_args)
 
 
 @pytest.mark.regression('9160')
