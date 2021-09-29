@@ -90,6 +90,8 @@ spack_ldlibs   = ['-lfoo']
 lheaderpad = ['-Wl,-headerpad_max_install_names']
 headerpad = ['-headerpad_max_install_names']
 
+target_args = ["-march=znver2", "-mtune=znver2"]
+
 # common compile arguments: includes, libs, -Wl linker args, other args
 common_compile_args = (
     test_include_paths +
@@ -120,7 +122,7 @@ def wrapper_environment():
             SPACK_LINK_DIRS=None,
             SPACK_INCLUDE_DIRS=None,
             SPACK_RPATH_DIRS=None,
-            SPACK_TARGET_ARGS='',
+            SPACK_TARGET_ARGS="-march=znver2 -mtune=znver2",
             SPACK_LINKER_ARG='-Wl,',
             SPACK_DTAGS_TO_ADD='--disable-new-dtags',
             SPACK_DTAGS_TO_STRIP='--enable-new-dtags'):
@@ -231,6 +233,7 @@ def test_cc_flags(wrapper_flags):
     check_args(
         cc, test_args,
         [real_cc] +
+        target_args +
         spack_cppflags +
         spack_cflags +
         spack_ldflags +
@@ -242,6 +245,7 @@ def test_cxx_flags(wrapper_flags):
     check_args(
         cxx, test_args,
         [real_cc] +
+        target_args +
         spack_cppflags +
         spack_cxxflags +
         spack_ldflags +
@@ -253,6 +257,7 @@ def test_fc_flags(wrapper_flags):
     check_args(
         fc, test_args,
         [real_cc] +
+        target_args +
         spack_fflags +
         spack_cppflags +
         spack_ldflags +
@@ -265,6 +270,7 @@ def test_dep_rpath():
     check_args(
         cc, test_args,
         [real_cc] +
+        target_args +
         common_compile_args)
 
 
@@ -274,6 +280,7 @@ def test_dep_include():
         check_args(
             cc, test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             ['-Ix'] +
             test_library_paths +
@@ -309,6 +316,7 @@ def test_dep_lib():
         check_args(
             cc, test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             test_library_paths +
             ['-Lx'] +
@@ -324,6 +332,7 @@ def test_dep_lib_no_rpath():
         check_args(
             cc, test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             test_library_paths +
             ['-Lx'] +
@@ -338,6 +347,7 @@ def test_dep_lib_no_lib():
         check_args(
             cc, test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             test_library_paths +
             ['-Wl,--disable-new-dtags'] +
@@ -354,6 +364,7 @@ def test_ccld_deps():
         check_args(
             cc, test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             ['-Ixinc',
              '-Iyinc',
@@ -383,6 +394,7 @@ def test_ccld_deps_isystem():
         check_args(
             cc, mytest_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             ['-isystem', 'fooinc',
              '-isystem', 'xinc',
@@ -408,6 +420,7 @@ def test_cc_deps():
         check_args(
             cc, ['-c'] + test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             ['-Ixinc',
              '-Iyinc',
@@ -431,6 +444,7 @@ def test_ccld_with_system_dirs():
         check_args(
             cc, sys_path_args + test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             ['-Ixinc',
              '-Iyinc',
@@ -469,6 +483,7 @@ def test_ccld_with_system_dirs_isystem():
         check_args(
             cc, sys_path_args + test_args,
             [real_cc] +
+            target_args +
             test_include_paths +
             ['-isystem', 'xinc',
              '-isystem', 'yinc',
@@ -590,12 +605,14 @@ def test_ccache_prepend_for_cc():
             cc, test_args,
             ['ccache'] +  # ccache prepended in cc mode
             [real_cc] +
+            target_args +
             common_compile_args)
         os.environ['SPACK_SHORT_SPEC'] = "foo@1.2=darwin-x86_64"
         check_args(
             cc, test_args,
             ['ccache'] +  # ccache prepended in cc mode
             [real_cc] +
+            target_args +
             lheaderpad +
             common_compile_args)
 
@@ -606,12 +623,14 @@ def test_no_ccache_prepend_for_fc():
         fc, test_args,
         # no ccache for Fortran
         [real_cc] +
+        target_args +
         common_compile_args)
     os.environ['SPACK_SHORT_SPEC'] = "foo@1.2=darwin-x86_64"
     check_args(
         fc, test_args,
         # no ccache for Fortran
         [real_cc] +
+        target_args +
         lheaderpad +
         common_compile_args)
 

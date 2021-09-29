@@ -144,6 +144,27 @@ extend() {
     unset IFS
 }
 
+# preextend LISTNAME1 LISTNAME2 [PREFIX]
+#
+# Prepend elements from second list to first, preserving order.
+# If PREFIX is provided, prepend it to each element.
+preextend() {
+    # figure out appropriate IFS for the list we're reading
+    setsep "$2"
+    if [ "$sep" != " " ]; then
+        IFS="$sep"
+    fi
+
+    # first, reverse the list to prepend
+    _reversed_list=""
+    eval "for elt in \${$2}; do prepend _reversed_list \"$3\${elt}\"; done"
+
+    # prepend reversed list to preextend in order
+    IFS="${lsep}"
+    for elt in $_reversed_list; do prepend $1 "$3${elt}"; done
+    unset IFS
+}
+
 # system_dir PATH
 # test whether a path is a system directory
 system_dir() {
@@ -580,9 +601,7 @@ case "$mode" in
         esac
 
         # prepend target args
-        for arg in $SPACK_TARGET_ARGS; do
-            prepend flags_list "${arg}"
-        done
+        preextend flags_list SPACK_TARGET_ARGS
         ;;
 esac
 
